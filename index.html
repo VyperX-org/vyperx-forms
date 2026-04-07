@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VyperX | Book a Call</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+    <div class="ambient ambient-c"></div>
+
+    <main class="page-shell">
+      <section class="hero-card">
+        <div class="brand-row">
+          <img
+            src="https://i.ibb.co/h1f0hSy6/Transparent-Vyper-X.png"
+            alt="VyperX"
+            class="brand-logo"
+          />
+          <div>
+            <p class="eyebrow">VyperX Growth Systems</p>
+            <h1>Book a Strategy Call</h1>
+          </div>
+        </div>
+
+        <p class="hero-copy">
+          Tell us about your brand, pick the services and plans you want to discuss,
+          and lock in a discovery call with our team.
+        </p>
+
+        <ul class="hero-points">
+          <li>Tailored growth roadmap for your business stage</li>
+          <li>Service + plan consultation (no commitment)</li>
+          <li>Response turnaround within 24 hours</li>
+        </ul>
+      </section>
+
+      <section class="form-card">
+        <form
+          id="bookCallForm"
+          name="book-a-call"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+          <input type="hidden" name="form-name" value="book-a-call" />
+          <p class="hidden-honeypot">
+            <label>
+              Do not fill this if you're human:
+              <input name="bot-field" />
+            </label>
+          </p>
+
+          <input type="hidden" id="selectedPlansInput" name="selectedPlans" value="" />
+          <input type="hidden" id="selectedCategoriesInput" name="selectedCategories" value="" />
+
+          <div class="stepper" aria-label="Form progress">
+            <div class="step-dot active" data-step-dot="1"><span>1</span><p>Contact</p></div>
+            <div class="step-line"></div>
+            <div class="step-dot" data-step-dot="2"><span>2</span><p>Business</p></div>
+            <div class="step-line"></div>
+            <div class="step-dot" data-step-dot="3"><span>3</span><p>Plans</p></div>
+          </div>
+
+          <div class="form-step active" data-step="1">
+            <div class="section-title-row">
+              <h2>Step 1: Contact Details</h2>
+              <span class="status-chip">Basic profile</span>
+            </div>
+
+            <div class="grid two">
+              <label class="field">
+                <span>Name *</span>
+                <input type="text" name="name" id="name" placeholder="Your name" required />
+              </label>
+              <label class="field">
+                <span>Email *</span>
+                <input type="email" name="email" id="email" placeholder="you@email.com" required />
+              </label>
+            </div>
+
+            <div class="grid two">
+              <label class="field">
+                <span>Phone</span>
+                <input type="tel" name="phone" id="phone" placeholder="+91 XXXXX XXXXX" />
+              </label>
+              <label class="field">
+                <span>Business Name</span>
+                <input type="text" name="business" id="business" placeholder="Your brand" />
+              </label>
+            </div>
+
+            <div class="step-actions right">
+              <button type="button" class="cta-btn step-next" data-next-step="2">Next</button>
+            </div>
+          </div>
+
+          <div class="form-step" data-step="2" hidden>
+            <div class="section-title-row">
+              <h2>Step 2: Business Context</h2>
+              <span class="status-chip">Requirements</span>
+            </div>
+
+            <div class="grid two">
+              <label class="field">
+                <span>Business Sector *</span>
+                <select name="businessSector" id="businessSector" required>
+                  <option value="">Select your sector</option>
+                  <option value="E-Commerce / D2C">E-Commerce / D2C</option>
+                  <option value="Fashion & Clothing">Fashion & Clothing</option>
+                  <option value="Beauty & Skincare">Beauty & Skincare</option>
+                  <option value="Food & Beverage">Food & Beverage</option>
+                  <option value="Health & Fitness">Health & Fitness</option>
+                  <option value="Real Estate">Real Estate</option>
+                  <option value="Education & Coaching">Education & Coaching</option>
+                  <option value="Technology / SaaS">Technology / SaaS</option>
+                  <option value="Agency / Freelancer">Agency / Freelancer</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+
+              <label class="field">
+                <span>Service Interested In *</span>
+                <select name="service" id="service" required>
+                  <option value="">Select a service</option>
+                  <option value="UGC">UGC</option>
+                  <option value="Website Development">Website Development</option>
+                  <option value="Marketing & Advertising">Marketing & Advertising</option>
+                  <option value="Social Media Management">Social Media Management</option>
+                  <option value="Full Growth Package">Full Growth Package</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="field">
+              <span>Message</span>
+              <textarea
+                name="message"
+                id="message"
+                rows="4"
+                placeholder="Tell us your growth goals, budget range, or timeline..."
+              ></textarea>
+            </label>
+
+            <div class="step-actions between">
+              <button type="button" class="ghost-btn step-back" data-prev-step="1">Back</button>
+              <button type="button" class="cta-btn step-next" data-next-step="3">Next</button>
+            </div>
+          </div>
+
+          <div class="form-step" data-step="3" hidden>
+            <div class="plans-wrap">
+              <div class="section-title-row">
+                <h2>Step 3: Select Plans To Discuss</h2>
+                <div class="section-title-row step3-meta">
+                  <span class="status-chip" id="selectionChip">0 plans selected</span>
+                </div>
+              </div>
+              <div id="plansContainer" class="plans-container"></div>
+            </div>
+
+            <div class="step-actions between">
+              <button type="button" class="ghost-btn step-back" data-prev-step="2">Back</button>
+              <button type="submit" class="cta-btn">
+                <span>Review & Confirm Call</span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+
+    <aside class="modal" id="confirmModal" aria-hidden="true">
+      <div class="modal-backdrop" data-close-modal="true"></div>
+      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle">
+        <div class="modal-head">
+          <h3 id="confirmTitle">Confirm Your Call Request</h3>
+          <button class="icon-btn" type="button" id="closeModalBtn" aria-label="Close confirmation">
+            ×
+          </button>
+        </div>
+
+        <p class="modal-copy">
+          Review your details and selected plans. Once confirmed, your request will be submitted.
+        </p>
+
+        <div class="preview-grid">
+          <div>
+            <p class="preview-label">Name</p>
+            <p id="previewName" class="preview-value">-</p>
+          </div>
+          <div>
+            <p class="preview-label">Email</p>
+            <p id="previewEmail" class="preview-value">-</p>
+          </div>
+          <div>
+            <p class="preview-label">Business</p>
+            <p id="previewBusiness" class="preview-value">-</p>
+          </div>
+          <div>
+            <p class="preview-label">Service</p>
+            <p id="previewService" class="preview-value">-</p>
+          </div>
+        </div>
+
+        <div>
+          <p class="preview-label">Plans Selected</p>
+          <div id="previewPlans" class="preview-plans"></div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="ghost-btn" id="editBtn">Go Back</button>
+          <button type="button" class="cta-btn" id="confirmSubmitBtn">
+            Confirm & Book Call
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <script src="/script.js" defer></script>
+  </body>
+</html>
