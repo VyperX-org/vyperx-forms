@@ -2,69 +2,33 @@ const pricingCategories = [
   {
     label: "UGC",
     plans: [
-      {
-        name: "Starter Creator",
-        tagline: "Start creating content that builds trust.",
-      },
-      {
-        name: "Growth Creator",
-        tagline: "Content designed to convert, not just look good.",
-      },
-      {
-        name: "Scale Creator Engine",
-        tagline: "A complete content engine built to scale your revenue.",
-      },
+      { name: "Starter Creator", tagline: "Start creating content that builds trust." },
+      { name: "Growth Creator", tagline: "Content designed to convert, not just look good." },
+      { name: "Scale Creator Engine", tagline: "A complete content engine built to scale your revenue." },
     ],
   },
   {
     label: "Website Development",
     plans: [
-      {
-        name: "Launch Store",
-        tagline: "Launch your brand with a strong digital foundation.",
-      },
-      {
-        name: "Growth Store",
-        tagline: "Built to convert visitors into paying customers.",
-      },
-      {
-        name: "Scale Store Engine",
-        tagline: "A complete eCommerce system designed for revenue growth.",
-      },
+      { name: "Launch Store", tagline: "Launch your brand with a strong digital foundation." },
+      { name: "Growth Store", tagline: "Built to convert visitors into paying customers." },
+      { name: "Scale Store Engine", tagline: "A complete eCommerce system designed for revenue growth." },
     ],
   },
   {
     label: "Marketing & Advertising",
     plans: [
-      {
-        name: "Launch Ads",
-        tagline: "Start attracting your first customers with paid ads.",
-      },
-      {
-        name: "Growth Ads System",
-        tagline: "Turn traffic into leads and leads into sales.",
-      },
-      {
-        name: "Scale Revenue Engine",
-        tagline: "Scale aggressively with a performance-driven ad system.",
-      },
+      { name: "Launch Ads", tagline: "Start attracting your first customers with paid ads." },
+      { name: "Growth Ads System", tagline: "Turn traffic into leads and leads into sales." },
+      { name: "Scale Revenue Engine", tagline: "Scale aggressively with a performance-driven ad system." },
     ],
   },
   {
     label: "Social Media Management",
     plans: [
-      {
-        name: "Starter",
-        tagline: "For brands that need consistent posting and page handling.",
-      },
-      {
-        name: "Growth",
-        tagline: "For brands wanting stronger presentation and management.",
-      },
-      {
-        name: "Elite",
-        tagline: "For premium account management and growth support.",
-      },
+      { name: "Starter", tagline: "For brands that need consistent posting and page handling." },
+      { name: "Growth", tagline: "For brands wanting stronger presentation and management." },
+      { name: "Elite", tagline: "For premium account management and growth support." },
     ],
   },
 ];
@@ -72,12 +36,16 @@ const pricingCategories = [
 const form = document.getElementById("bookCallForm");
 const plansContainer = document.getElementById("plansContainer");
 const selectionChip = document.getElementById("selectionChip");
+
 const modal = document.getElementById("confirmModal");
 const closeModalBtn = document.getElementById("closeModalBtn");
 const editBtn = document.getElementById("editBtn");
 const confirmSubmitBtn = document.getElementById("confirmSubmitBtn");
+const submitBtnLabel = confirmSubmitBtn.querySelector(".btn-label");
+
 const selectedPlansInput = document.getElementById("selectedPlansInput");
 const selectedCategoriesInput = document.getElementById("selectedCategoriesInput");
+
 const formSteps = Array.from(document.querySelectorAll(".form-step"));
 const stepDots = Array.from(document.querySelectorAll("[data-step-dot]"));
 const nextButtons = Array.from(document.querySelectorAll(".step-next"));
@@ -88,8 +56,14 @@ const previewEmail = document.getElementById("previewEmail");
 const previewBusiness = document.getElementById("previewBusiness");
 const previewService = document.getElementById("previewService");
 const previewPlans = document.getElementById("previewPlans");
+const previewGrid = document.getElementById("previewGrid");
+const previewPlansWrap = document.getElementById("previewPlansWrap");
+const modalActions = document.getElementById("modalActions");
+const modalCopy = document.getElementById("modalCopy");
+const submitSuccess = document.getElementById("submitSuccess");
 
 let currentStep = 1;
+let isSubmitting = false;
 
 function escapeHtml(value) {
   return value
@@ -98,6 +72,50 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function getStepElement(stepNumber) {
+  return formSteps.find((step) => Number(step.dataset.step) === stepNumber);
+}
+
+function updateStepUI() {
+  formSteps.forEach((step) => {
+    const stepNumber = Number(step.dataset.step);
+    const isActive = stepNumber === currentStep;
+    step.hidden = !isActive;
+    step.classList.toggle("active", isActive);
+  });
+
+  stepDots.forEach((dot) => {
+    const stepNumber = Number(dot.dataset.stepDot);
+    dot.classList.toggle("active", stepNumber === currentStep);
+    dot.classList.toggle("done", stepNumber < currentStep);
+  });
+}
+
+function goToStep(stepNumber) {
+  currentStep = stepNumber;
+  updateStepUI();
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function validateCurrentStep() {
+  const currentStepEl = getStepElement(currentStep);
+  if (!currentStepEl) return true;
+
+  const requiredFields = Array.from(
+    currentStepEl.querySelectorAll("input[required], select[required], textarea[required]")
+  );
+
+  for (const field of requiredFields) {
+    if (!field.checkValidity()) {
+      field.reportValidity();
+      field.focus();
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function renderPlans() {
@@ -146,58 +164,27 @@ function updateSelections() {
   document.querySelectorAll(".plan-card").forEach((card) => card.classList.remove("selected"));
   checked.forEach((input) => input.closest(".plan-card").classList.add("selected"));
 
-  const names = checked.map((i) => i.value);
-  const categories = [...new Set(checked.map((i) => i.dataset.category))];
+  const names = checked.map((input) => input.value);
+  const categories = [...new Set(checked.map((input) => input.dataset.category))];
 
   selectedPlansInput.value = names.join(" | ");
   selectedCategoriesInput.value = categories.join(" | ");
-
   selectionChip.textContent = `${names.length} plan${names.length === 1 ? "" : "s"} selected`;
 }
 
-function getStepElement(stepNumber) {
-  return formSteps.find((step) => Number(step.dataset.step) === stepNumber);
-}
-
-function updateStepUI() {
-  formSteps.forEach((step) => {
-    const stepNumber = Number(step.dataset.step);
-    const isActive = stepNumber === currentStep;
-    step.hidden = !isActive;
-    step.classList.toggle("active", isActive);
-  });
-
-  stepDots.forEach((dot) => {
-    const stepNumber = Number(dot.dataset.stepDot);
-    dot.classList.toggle("active", stepNumber === currentStep);
-    dot.classList.toggle("done", stepNumber < currentStep);
-  });
-}
-
-function validateCurrentStep() {
-  const currentStepEl = getStepElement(currentStep);
-  if (!currentStepEl) return true;
-
-  const requiredFields = Array.from(currentStepEl.querySelectorAll("input[required], select[required], textarea[required]"));
-
-  for (const field of requiredFields) {
-    if (!field.checkValidity()) {
-      field.reportValidity();
-      field.focus();
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function goToStep(stepNumber) {
-  currentStep = stepNumber;
-  updateStepUI();
-  form.scrollIntoView({ behavior: "smooth", block: "start" });
+function resetModalState() {
+  previewGrid.hidden = false;
+  previewPlansWrap.hidden = false;
+  modalActions.hidden = false;
+  submitSuccess.hidden = true;
+  modalCopy.textContent = "Review your details and selected plans. Once confirmed, your request will be submitted.";
+  submitBtnLabel.textContent = "Confirm & Book Call";
+  confirmSubmitBtn.classList.remove("is-loading");
+  confirmSubmitBtn.disabled = false;
 }
 
 function openModal() {
+  resetModalState();
   modal.classList.add("open");
   modal.setAttribute("aria-hidden", "false");
   document.body.style.overflow = "hidden";
@@ -221,7 +208,6 @@ function fillPreview() {
   previewService.textContent = service;
 
   const checked = Array.from(document.querySelectorAll('input[name="planChoice"]:checked'));
-
   if (!checked.length) {
     previewPlans.innerHTML = '<span class="preview-plan-chip">No plan selected yet</span>';
     return;
@@ -232,24 +218,33 @@ function fillPreview() {
     .join("");
 }
 
+async function submitToNetlify() {
+  const formData = new FormData(form);
+  formData.set("form-name", "Book a Call");
+
+  const encodedBody = new URLSearchParams(formData).toString();
+  const response = await fetch("/", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: encodedBody,
+  });
+
+  if (!response.ok) {
+    throw new Error("Submission failed");
+  }
+}
+
+function showSubmitSuccess() {
+  previewGrid.hidden = true;
+  previewPlansWrap.hidden = true;
+  modalActions.hidden = true;
+  modalCopy.textContent = "Your call booking has been confirmed.";
+  submitSuccess.hidden = false;
+}
+
 renderPlans();
 updateSelections();
 updateStepUI();
-
-nextButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const nextStep = Number(button.dataset.nextStep);
-    if (!validateCurrentStep()) return;
-    goToStep(nextStep);
-  });
-});
-
-backButtons.forEach((button) => {
-  button.addEventListener("click", () => {
-    const prevStep = Number(button.dataset.prevStep);
-    goToStep(prevStep);
-  });
-});
 
 plansContainer.addEventListener("click", (event) => {
   const button = event.target.closest(".category-head");
@@ -266,13 +261,23 @@ plansContainer.addEventListener("change", (event) => {
   updateSelections();
 });
 
+nextButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    if (!validateCurrentStep()) return;
+    goToStep(Number(button.dataset.nextStep));
+  });
+});
+
+backButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    goToStep(Number(button.dataset.prevStep));
+  });
+});
+
 form.addEventListener("submit", (event) => {
   event.preventDefault();
 
-  if (!validateCurrentStep()) {
-    return;
-  }
-
+  if (!validateCurrentStep()) return;
   if (!form.checkValidity()) {
     form.reportValidity();
     return;
@@ -282,14 +287,37 @@ form.addEventListener("submit", (event) => {
   openModal();
 });
 
-confirmSubmitBtn.addEventListener("click", () => {
-  confirmSubmitBtn.disabled = true;
-  confirmSubmitBtn.textContent = "Submitting...";
-  form.submit();
+confirmSubmitBtn.addEventListener("click", async () => {
+  if (isSubmitting) return;
+
+  try {
+    isSubmitting = true;
+    confirmSubmitBtn.disabled = true;
+    confirmSubmitBtn.classList.add("is-loading");
+    submitBtnLabel.textContent = "Submitting";
+
+    await submitToNetlify();
+    showSubmitSuccess();
+
+    form.reset();
+    document.querySelectorAll('input[name="planChoice"]').forEach((input) => {
+      input.checked = false;
+    });
+    updateSelections();
+    goToStep(1);
+  } catch (error) {
+    confirmSubmitBtn.disabled = false;
+    confirmSubmitBtn.classList.remove("is-loading");
+    submitBtnLabel.textContent = "Confirm & Book Call";
+    alert("Submission failed. Please try again in a moment.");
+  } finally {
+    isSubmitting = false;
+  }
 });
 
 closeModalBtn.addEventListener("click", closeModal);
 editBtn.addEventListener("click", closeModal);
+
 modal.addEventListener("click", (event) => {
   if (event.target.matches('[data-close-modal="true"]')) {
     closeModal();

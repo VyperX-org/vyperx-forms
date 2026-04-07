@@ -44,12 +44,13 @@
       <section class="form-card">
         <form
           id="bookCallForm"
-          name="Book A Call"
+          name="Book a Call"
           method="POST"
+          action="/"
           data-netlify="true"
           netlify-honeypot="bot-field"
         >
-          <input type="hidden" name="form-name" value="book-a-call" />
+          <input type="hidden" name="form-name" value="Book a Call" />
           <p class="hidden-honeypot">
             <label>
               Do not fill this if you're human:
@@ -186,11 +187,11 @@
           </button>
         </div>
 
-        <p class="modal-copy">
+        <p class="modal-copy" id="modalCopy">
           Review your details and selected plans. Once confirmed, your request will be submitted.
         </p>
 
-        <div class="preview-grid">
+        <div class="preview-grid" id="previewGrid">
           <div>
             <p class="preview-label">Name</p>
             <p id="previewName" class="preview-value">-</p>
@@ -209,15 +210,24 @@
           </div>
         </div>
 
-        <div>
+        <div id="previewPlansWrap">
           <p class="preview-label">Plans Selected</p>
           <div id="previewPlans" class="preview-plans"></div>
         </div>
 
-        <div class="modal-actions">
+        <div class="submit-success" id="submitSuccess" hidden>
+          <div class="success-ring">
+            <div class="success-check">✓</div>
+          </div>
+          <h4>Call Request Sent</h4>
+          <p>Your details have been submitted successfully. Team VyperX will reach out shortly.</p>
+        </div>
+
+        <div class="modal-actions" id="modalActions">
           <button type="button" class="ghost-btn" id="editBtn">Go Back</button>
           <button type="button" class="cta-btn" id="confirmSubmitBtn">
-            Confirm & Book Call
+            <span class="btn-label">Confirm & Book Call</span>
+            <span class="btn-spinner" aria-hidden="true"></span>
           </button>
         </div>
       </div>
