@@ -65,6 +65,10 @@ const submitSuccess = document.getElementById("submitSuccess");
 let currentStep = 1;
 let isSubmitting = false;
 
+function wait(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 function escapeHtml(value) {
   return value
     .replace(/&/g, "&amp;")
@@ -235,6 +239,8 @@ async function submitToNetlify() {
 }
 
 function showSubmitSuccess() {
+  confirmSubmitBtn.classList.remove("is-loading");
+  confirmSubmitBtn.disabled = false;
   previewGrid.hidden = true;
   previewPlansWrap.hidden = true;
   modalActions.hidden = true;
@@ -245,6 +251,7 @@ function showSubmitSuccess() {
 renderPlans();
 updateSelections();
 updateStepUI();
+resetModalState();
 
 plansContainer.addEventListener("click", (event) => {
   const button = event.target.closest(".category-head");
@@ -294,9 +301,10 @@ confirmSubmitBtn.addEventListener("click", async () => {
     isSubmitting = true;
     confirmSubmitBtn.disabled = true;
     confirmSubmitBtn.classList.add("is-loading");
-    submitBtnLabel.textContent = "Submitting";
+    submitBtnLabel.textContent = "Submitting...";
 
-    await submitToNetlify();
+    // Keep spinner visible briefly so users can clearly see submit progress.
+    await Promise.all([submitToNetlify(), wait(900)]);
     showSubmitSuccess();
 
     form.reset();
