@@ -45,7 +45,6 @@ const submitBtnLabel = confirmSubmitBtn.querySelector(".btn-label");
 
 const selectedPlansInput = document.getElementById("selectedPlansInput");
 const selectedCategoriesInput = document.getElementById("selectedCategoriesInput");
-const requestSummaryInput = document.getElementById("requestSummary");
 
 const formSteps = Array.from(document.querySelectorAll(".form-step"));
 const stepDots = Array.from(document.querySelectorAll("[data-step-dot]"));
@@ -176,19 +175,6 @@ function updateSelections() {
   selectedCategoriesInput.value = categories.join(", ");
   selectionChip.textContent = `${names.length} plan${names.length === 1 ? "" : "s"} selected`;
 
-  const summaryLines = [
-    `Name: ${document.getElementById("name").value.trim() || "-"}`,
-    `Email: ${document.getElementById("email").value.trim() || "-"}`,
-    `Phone: ${document.getElementById("phone").value.trim() || "-"}`,
-    `Business: ${document.getElementById("business").value.trim() || "-"}`,
-    `Business Sector: ${document.getElementById("businessSector").value || "-"}`,
-    `Service: ${document.getElementById("service").value || "-"}`,
-    `Selected Plans: ${names.length ? names.join(", ") : "-"}`,
-    `Selected Categories: ${categories.length ? categories.join(", ") : "-"}`,
-    `Message: ${document.getElementById("message").value.trim() || "-"}`,
-  ];
-
-  requestSummaryInput.value = summaryLines.join("\n");
 }
 
 function resetModalState() {
