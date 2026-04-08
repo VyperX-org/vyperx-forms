@@ -487,6 +487,8 @@ textarea:focus {
 .modal-card {
   position: relative;
   width: min(660px, calc(100% - 1.6rem));
+  max-height: calc(100vh - 1.6rem);
+  overflow: auto;
   border: 1px solid var(--line);
   border-radius: 18px;
   background: linear-gradient(155deg, rgba(11, 18, 28, 0.96), rgba(9, 15, 25, 0.97));
@@ -641,6 +643,27 @@ textarea:focus {
   min-width: 124px;
 }
 
+.consent-note {
+  margin: 0.4rem 0 0.85rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(127, 153, 191, 0.18);
+  border-radius: 12px;
+  background: rgba(8, 13, 22, 0.56);
+  color: #bfcce3;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.consent-note a {
+  color: #d1f5ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.consent-note a:hover {
+  color: #ffffff;
+}
+
 @keyframes rotate {
   to {
     transform: rotate(360deg);
@@ -732,14 +755,62 @@ textarea:focus {
 }
 
 @media (max-width: 700px) {
+  .page-shell {
+    width: min(1220px, 100% - 1rem);
+    margin: 0.9rem auto 1.2rem;
+    gap: 0.9rem;
+  }
+
+  .hero-card {
+    text-align: left;
+  }
+
+  .hero-card h1 {
+    text-align: left;
+    max-width: 11ch;
+    line-height: 1.04;
+  }
+
+  .hero-card .brand-row {
+    align-items: center;
+  }
+
   .grid.two,
   .preview-grid {
     grid-template-columns: 1fr;
   }
 
+  .hero-card,
+  .form-card {
+    border-radius: 18px;
+  }
+
+  .hero-card,
+  .form-card {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .hero-card::before,
+  .ambient-a,
+  .ambient-b,
+  .ambient-c {
+    opacity: 0.55;
+  }
+
   .stepper {
-    grid-template-columns: 1fr;
-    gap: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.45rem;
+    margin-bottom: 0.9rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .stepper::-webkit-scrollbar {
+    display: none;
   }
 
   .step-line {
@@ -747,14 +818,104 @@ textarea:focus {
   }
 
   .step-dot {
-    grid-template-columns: auto 1fr;
+    display: flex;
+    flex: 1 0 auto;
+    min-width: 0;
+    flex-direction: column;
     align-items: center;
-    justify-items: start;
-    gap: 0.55rem;
+    justify-content: center;
+    gap: 0.25rem;
   }
 
   .step-dot p {
-    font-size: 0.76rem;
+    display: none;
+  }
+
+  .step-dot span {
+    width: 30px;
+    height: 30px;
+    font-size: 0.8rem;
+  }
+
+  .step-dot.active span {
+    box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.14);
+  }
+
+  .section-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .section-title-row h2 {
+    font-size: 0.96rem;
+  }
+
+  .status-chip,
+  .section-sub {
+    white-space: normal;
+  }
+
+  .brand-row {
+    align-items: flex-start;
+  }
+
+  .brand-logo {
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.09em;
+  }
+
+  h1 {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+  }
+
+  .hero-copy {
+    margin: 1rem 0 0.9rem;
+    font-size: 0.96rem;
+    line-height: 1.6;
+  }
+
+  .hero-points {
+    gap: 0.56rem;
+  }
+
+  .hero-points li {
+    font-size: 0.92rem;
+    padding-left: 1.35rem;
+  }
+
+  input,
+  select,
+  textarea {
+    padding: 0.9rem 0.85rem;
+    font-size: 16px;
+  }
+
+  .field {
+    margin-bottom: 0.6rem;
+  }
+
+  .plans-wrap {
+    padding: 0.9rem;
+    margin: 0.9rem 0 1rem;
+  }
+
+  .plan-list {
+    padding: 0.7rem;
+  }
+
+  .plan-card {
+    padding: 0.68rem;
+  }
+
+  .cta-btn,
+  .ghost-btn {
+    min-height: 46px;
   }
 
   .hero-card,
@@ -781,5 +942,90 @@ textarea:focus {
   .step-actions .cta-btn,
   .step-actions .ghost-btn {
     width: 100%;
+  }
+
+  .consent-note {
+    margin-top: 0.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-card {
+    width: min(100% - 1rem, 660px);
+    max-height: calc(100vh - 1rem);
+    padding: 0.9rem;
+    border-radius: 16px;
+  }
+
+  .modal-head h3 {
+    font-size: 1rem;
+  }
+
+  .submit-success h4 {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-shell {
+    width: min(1220px, 100% - 0.7rem);
+    margin: 0.7rem auto 1rem;
+  }
+
+  .hero-card,
+  .form-card,
+  .modal-card {
+    border-radius: 14px;
+  }
+
+  .hero-card,
+  .form-card,
+  .modal-card {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .step-dot {
+    gap: 0.45rem;
+  }
+
+  .step-dot span {
+    width: 28px;
+    height: 28px;
+  }
+
+  .step-dot p {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  .section-title-row {
+    margin-bottom: 0.75rem;
+  }
+
+  .field span {
+    font-size: 0.78rem;
+  }
+
+  .plan-card h4 {
+    font-size: 0.88rem;
+  }
+
+  .plan-card p {
+    font-size: 0.76rem;
+  }
+
+  .modal-actions {
+    gap: 0.55rem;
+  }
+
+  .success-ring {
+    width: 64px;
+    height: 64px;
+  }
+
+  .success-check {
+    width: 38px;
+    height: 38px;
+    font-size: 1.2rem;
   }
 }

@@ -36,7 +36,7 @@
 
         <ul class="hero-points">
           <li>Tailored growth roadmap for your business stage</li>
-          <li>Service + plan consultation (no commitment)</li>
+          <li>Service + plan consultation **</li>
           <li>Response turnaround within 24 hours</li>
         </ul>
       </section>
@@ -60,6 +60,7 @@
 
           <input type="hidden" id="selectedPlansInput" name="selectedPlans" value="" />
           <input type="hidden" id="selectedCategoriesInput" name="selectedCategories" value="" />
+          <textarea id="requestSummary" name="Request Summary" hidden></textarea>
 
           <div class="stepper" aria-label="Form progress">
             <div class="step-dot active" data-step-dot="1"><span>1</span><p>Contact</p></div>
@@ -165,6 +166,13 @@
               </div>
               <div id="plansContainer" class="plans-container"></div>
             </div>
+
+            <p class="consent-note">
+              By submitting, you accept VyperX's
+              <a href="https://vyperx.in/policies/terms-conditions" target="_blank" rel="noopener noreferrer">Terms and Conditions</a>
+              and
+              <a href="https://vyperx.in/policies/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
+            </p>
 
             <div class="step-actions between">
               <button type="button" class="ghost-btn step-back" data-prev-step="2">Back</button>
