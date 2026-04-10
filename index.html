@@ -141,7 +141,7 @@
                 <span>Preferred Call Date</span>
                 <div class="picker-field">
                   <input type="date" name="preferredCallDate" id="preferredCallDate" autocomplete="off" />
-                  <button type="button" class="picker-btn" data-open-picker="date" aria-label="Open date picker">Pick</button>
+                  <button type="button" class="picker-btn" data-open-picker="date" aria-label="Open date picker">Pick from Calendar</button>
                 </div>
                 <small class="field-hint" id="preferredCallDay" aria-live="polite"></small>
               </label>
@@ -149,8 +149,9 @@
                 <span>Preferred Call Time</span>
                 <div class="picker-field">
                   <input type="time" name="preferredCallTime" id="preferredCallTime" step="900" />
-                  <button type="button" class="picker-btn" data-open-picker="time" aria-label="Open time picker">Pick</button>
+                  <button type="button" class="picker-btn" data-open-picker="time" aria-label="Open time picker">Pick from Clock</button>
                 </div>
+                <small class="field-error" id="preferredCallError" aria-live="polite"></small>
               </label>
             </div>
 

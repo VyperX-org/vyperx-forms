@@ -288,6 +288,12 @@ h1 {
   min-height: 1em;
 }
 
+.field-error {
+  font-size: 0.75rem;
+  color: #ff9fb0;
+  min-height: 1em;
+}
+
 .picker-field {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -310,6 +316,10 @@ h1 {
   transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
 }
 
+.picker-btn {
+  min-width: 88px;
+}
+
 .picker-btn:hover {
   border-color: rgba(0, 212, 255, 0.45);
 }
@@ -319,6 +329,18 @@ h1 {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.18);
   transform: translateY(-1px);
+}
+
+input[type="date"],
+input[type="time"] {
+  color-scheme: dark;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+  opacity: 0.95;
+  filter: invert(1) brightness(1.45) contrast(1.1);
+  cursor: pointer;
 }
 
 input,

@@ -72,6 +72,7 @@ const submitSuccess = document.getElementById("submitSuccess");
 const preferredCallDateInput = document.getElementById("preferredCallDate");
 const preferredCallTimeInput = document.getElementById("preferredCallTime");
 const preferredCallDay = document.getElementById("preferredCallDay");
+const preferredCallError = document.getElementById("preferredCallError");
 const openDatePickerButton = document.querySelector('[data-open-picker="date"]');
 const openTimePickerButton = document.querySelector('[data-open-picker="time"]');
 
@@ -274,11 +275,18 @@ function updatePreferredDayLabel(dateValue) {
   });
 }
 
+function setPreferredScheduleError(message) {
+  if (preferredCallError) {
+    preferredCallError.textContent = message || "";
+  }
+}
+
 function validatePreferredSchedule() {
   if (!preferredCallDateInput || !preferredCallTimeInput) return true;
 
   preferredCallDateInput.setCustomValidity("");
   preferredCallTimeInput.setCustomValidity("");
+  setPreferredScheduleError("");
 
   const minDateTime = getMinBookingDateTime();
   const minDate = toLocalDateString(minDateTime);
@@ -290,12 +298,16 @@ function validatePreferredSchedule() {
   updatePreferredDayLabel(selectedDate);
 
   if (selectedDate && !selectedTime) {
-    preferredCallTimeInput.setCustomValidity("Choose a preferred call time or clear the date.");
+    const message = "Choose a preferred call time or clear the date.";
+    preferredCallTimeInput.setCustomValidity(message);
+    setPreferredScheduleError(message);
     return false;
   }
 
   if (selectedTime && !selectedDate) {
-    preferredCallDateInput.setCustomValidity("Choose a preferred call date or clear the time.");
+    const message = "Choose a preferred call date or clear the time.";
+    preferredCallDateInput.setCustomValidity(message);
+    setPreferredScheduleError(message);
     return false;
   }
 
@@ -305,7 +317,9 @@ function validatePreferredSchedule() {
 
   const selectedDateTime = parseSelectedDateTime(selectedDate, selectedTime);
   if (Number.isNaN(selectedDateTime.getTime())) {
-    preferredCallTimeInput.setCustomValidity("Enter a valid call date and time.");
+    const message = "Enter a valid call date and time.";
+    preferredCallTimeInput.setCustomValidity(message);
+    setPreferredScheduleError(message);
     return false;
   }
 
@@ -314,9 +328,9 @@ function validatePreferredSchedule() {
   preferredCallTimeInput.min = minTimeForSelectedDate;
 
   if (selectedDateTime < minDateTime) {
-    preferredCallTimeInput.setCustomValidity(
-      `Select a call slot at least ${MIN_BOOKING_LEAD_HOURS} hours from now.`
-    );
+    const message = `Select a call slot at least ${MIN_BOOKING_LEAD_HOURS} hours from now.`;
+    preferredCallTimeInput.setCustomValidity(message);
+    setPreferredScheduleError(message);
     return false;
   }
 
@@ -325,6 +339,8 @@ function validatePreferredSchedule() {
 
 function openNativePicker(input) {
   if (!input) return;
+
+  input.focus();
 
   if (typeof input.showPicker === "function") {
     try {
@@ -335,7 +351,11 @@ function openNativePicker(input) {
     }
   }
 
-  input.focus();
+  try {
+    input.click();
+  } catch {
+    // Keep focus fallback for browsers that disallow synthetic click opening.
+  }
 }
 
 function updateStepUI() {
