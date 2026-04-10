@@ -45,6 +45,15 @@ const submitBtnLabel = confirmSubmitBtn.querySelector(".btn-label");
 
 const selectedPlansInput = document.getElementById("selectedPlansInput");
 const selectedCategoriesInput = document.getElementById("selectedCategoriesInput");
+const vxSourceInput = document.getElementById("vxSourceInput");
+const vxSelectedCountInput = document.getElementById("vxSelectedCountInput");
+const vxPlanNamesInput = document.getElementById("vxPlanNamesInput");
+const vxPlanTiersInput = document.getElementById("vxPlanTiersInput");
+const vxTotalOriginalInput = document.getElementById("vxTotalOriginalInput");
+const vxTotalDiscountedInput = document.getElementById("vxTotalDiscountedInput");
+const vxTotalSavingsInput = document.getElementById("vxTotalSavingsInput");
+const vxCurrencyInput = document.getElementById("vxCurrencyInput");
+const vxPayloadInput = document.getElementById("vxPayloadInput");
 
 const formSteps = Array.from(document.querySelectorAll(".form-step"));
 const stepDots = Array.from(document.querySelectorAll("[data-step-dot]"));
@@ -65,6 +74,12 @@ const submitSuccess = document.getElementById("submitSuccess");
 let currentStep = 1;
 let isSubmitting = false;
 
+const allowedMessageOrigins = new Set([
+  "https://vyperx.in",
+  "https://www.vyperx.in",
+  "http://localhost:5173",
+]);
+
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -76,6 +91,119 @@ function escapeHtml(value) {
     .replace(/>/g, "&gt;")
     .replace(/\"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+function toStringSafe(value) {
+  if (value === null || value === undefined) return "";
+  return String(value);
+}
+
+function parseNamesList(value) {
+  return toStringSafe(value)
+    .split("|")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function normalizePlanName(value) {
+  return toStringSafe(value).trim().toLowerCase();
+}
+
+function preselectPlansByName(planNames) {
+  const normalized = new Set(planNames.map(normalizePlanName));
+  const planInputs = Array.from(document.querySelectorAll('input[name="planChoice"]'));
+
+  planInputs.forEach((input) => {
+    input.checked = normalized.has(normalizePlanName(input.value));
+  });
+
+  updateSelections();
+}
+
+function applyExternalPackageData(data) {
+  const source = toStringSafe(data.vx_source || data.source || "pricing");
+
+  let planNames = [];
+  if (Array.isArray(data.selectedPlanNames)) {
+    planNames = data.selectedPlanNames.map(toStringSafe).filter(Boolean);
+  } else if (Array.isArray(data.selectedPlans)) {
+    planNames = data.selectedPlans
+      .map((plan) => (typeof plan === "string" ? plan : plan?.name))
+      .map(toStringSafe)
+      .filter(Boolean);
+  } else {
+    planNames = parseNamesList(data.vx_plan_names);
+  }
+
+  const planTiers = Array.isArray(data.selectedPlanTiers)
+    ? data.selectedPlanTiers.map(toStringSafe).filter(Boolean)
+    : parseNamesList(data.vx_plan_tiers);
+
+  const totalOriginal = toStringSafe(data.vx_total_original ?? data.totalOriginal);
+  const totalDiscounted = toStringSafe(data.vx_total_discounted ?? data.totalDiscounted);
+  const totalSavings = toStringSafe(data.vx_total_savings ?? data.totalSavings);
+  const currency = toStringSafe(data.vx_currency || data.currency || "INR");
+
+  vxSourceInput.value = source;
+  vxSelectedCountInput.value = toStringSafe(data.vx_selected_count || data.selectedPlanNames?.length || planNames.length);
+  vxPlanNamesInput.value = planNames.join(" | ");
+  vxPlanTiersInput.value = planTiers.join(" | ");
+  vxTotalOriginalInput.value = totalOriginal;
+  vxTotalDiscountedInput.value = totalDiscounted;
+  vxTotalSavingsInput.value = totalSavings;
+  vxCurrencyInput.value = currency;
+
+  const payloadValue = toStringSafe(data.vx_payload || JSON.stringify(data));
+  vxPayloadInput.value = payloadValue;
+
+  if (planNames.length) {
+    preselectPlansByName(planNames);
+  }
+}
+
+function prefillFromQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  if (![...params.keys()].some((key) => key.startsWith("vx_"))) {
+    return;
+  }
+
+  const payloadRaw = params.get("vx_payload");
+  const data = {
+    vx_source: params.get("vx_source") || "pricing",
+    vx_selected_count: params.get("vx_selected_count") || "",
+    vx_plan_names: params.get("vx_plan_names") || "",
+    vx_plan_tiers: params.get("vx_plan_tiers") || "",
+    vx_total_original: params.get("vx_total_original") || "",
+    vx_total_discounted: params.get("vx_total_discounted") || "",
+    vx_total_savings: params.get("vx_total_savings") || "",
+    vx_currency: params.get("vx_currency") || "INR",
+    vx_payload: payloadRaw || "",
+  };
+
+  if (payloadRaw) {
+    try {
+      const parsedPayload = JSON.parse(payloadRaw);
+      applyExternalPackageData({ ...data, ...parsedPayload });
+      return;
+    } catch {
+      // Keep fallback behavior if payload is not valid JSON.
+    }
+  }
+
+  applyExternalPackageData(data);
+}
+
+function handlePrefillMessage(event) {
+  if (!allowedMessageOrigins.has(event.origin)) {
+    return;
+  }
+
+  const message = event.data;
+  if (!message || message.type !== "VYPERX_PACKAGE_PREFILL" || !message.payload) {
+    return;
+  }
+
+  applyExternalPackageData(message.payload);
 }
 
 function getStepElement(stepNumber) {
@@ -250,9 +378,12 @@ function showSubmitSuccess() {
 }
 
 renderPlans();
+prefillFromQueryParams();
 updateSelections();
 updateStepUI();
 resetModalState();
+
+window.addEventListener("message", handlePrefillMessage);
 
 plansContainer.addEventListener("click", (event) => {
   const button = event.target.closest(".category-head");
