@@ -134,17 +134,23 @@
                   <option value="Other">Other</option>
                 </select>
               </label>
+            </div>
 
+            <div class="grid two">
               <label class="field">
-                <span>Service Interested In *</span>
-                <select name="service" id="service" required>
-                  <option value="">Select a service</option>
-                  <option value="UGC">UGC</option>
-                  <option value="Website Development">Website Development</option>
-                  <option value="Marketing & Advertising">Marketing & Advertising</option>
-                  <option value="Social Media Management">Social Media Management</option>
-                  <option value="Full Growth Package">Full Growth Package</option>
-                </select>
+                <span>Preferred Call Date</span>
+                <div class="picker-field">
+                  <input type="date" name="preferredCallDate" id="preferredCallDate" autocomplete="off" />
+                  <button type="button" class="picker-btn" data-open-picker="date" aria-label="Open date picker">Pick</button>
+                </div>
+                <small class="field-hint" id="preferredCallDay" aria-live="polite"></small>
+              </label>
+              <label class="field">
+                <span>Preferred Call Time</span>
+                <div class="picker-field">
+                  <input type="time" name="preferredCallTime" id="preferredCallTime" step="900" />
+                  <button type="button" class="picker-btn" data-open-picker="time" aria-label="Open time picker">Pick</button>
+                </div>
               </label>
             </div>
 
@@ -219,10 +225,6 @@
           <div>
             <p class="preview-label">Business</p>
             <p id="previewBusiness" class="preview-value">-</p>
-          </div>
-          <div>
-            <p class="preview-label">Service</p>
-            <p id="previewService" class="preview-value">-</p>
           </div>
         </div>
 

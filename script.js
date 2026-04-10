@@ -63,16 +63,22 @@ const backButtons = Array.from(document.querySelectorAll(".step-back"));
 const previewName = document.getElementById("previewName");
 const previewEmail = document.getElementById("previewEmail");
 const previewBusiness = document.getElementById("previewBusiness");
-const previewService = document.getElementById("previewService");
 const previewPlans = document.getElementById("previewPlans");
 const previewGrid = document.getElementById("previewGrid");
 const previewPlansWrap = document.getElementById("previewPlansWrap");
 const modalActions = document.getElementById("modalActions");
 const modalCopy = document.getElementById("modalCopy");
 const submitSuccess = document.getElementById("submitSuccess");
+const preferredCallDateInput = document.getElementById("preferredCallDate");
+const preferredCallTimeInput = document.getElementById("preferredCallTime");
+const preferredCallDay = document.getElementById("preferredCallDay");
+const openDatePickerButton = document.querySelector('[data-open-picker="date"]');
+const openTimePickerButton = document.querySelector('[data-open-picker="time"]');
 
 let currentStep = 1;
 let isSubmitting = false;
+const MIN_BOOKING_LEAD_HOURS = 5;
+const TIME_STEP_MINUTES = 15;
 
 const allowedMessageOrigins = new Set([
   "https://vyperx.in",
@@ -210,6 +216,128 @@ function getStepElement(stepNumber) {
   return formSteps.find((step) => Number(step.dataset.step) === stepNumber);
 }
 
+function padNumber(value) {
+  return String(value).padStart(2, "0");
+}
+
+function ceilToMinuteStep(date, stepMinutes) {
+  const rounded = new Date(date.getTime());
+  rounded.setSeconds(0, 0);
+  const minutes = rounded.getMinutes();
+  const remainder = minutes % stepMinutes;
+
+  if (remainder !== 0) {
+    rounded.setMinutes(minutes + (stepMinutes - remainder));
+  }
+
+  return rounded;
+}
+
+function getMinBookingDateTime() {
+  const leadMs = MIN_BOOKING_LEAD_HOURS * 60 * 60 * 1000;
+  return ceilToMinuteStep(new Date(Date.now() + leadMs), TIME_STEP_MINUTES);
+}
+
+function toLocalDateString(date) {
+  return `${date.getFullYear()}-${padNumber(date.getMonth() + 1)}-${padNumber(date.getDate())}`;
+}
+
+function toLocalTimeString(date) {
+  return `${padNumber(date.getHours())}:${padNumber(date.getMinutes())}`;
+}
+
+function parseSelectedDateTime(dateValue, timeValue) {
+  const [year, month, day] = dateValue.split("-").map(Number);
+  const [hours, minutes] = timeValue.split(":").map(Number);
+  return new Date(year, month - 1, day, hours, minutes, 0, 0);
+}
+
+function updatePreferredDayLabel(dateValue) {
+  if (!preferredCallDay) return;
+
+  if (!dateValue) {
+    preferredCallDay.textContent = "";
+    return;
+  }
+
+  const selectedDate = new Date(`${dateValue}T00:00:00`);
+  if (Number.isNaN(selectedDate.getTime())) {
+    preferredCallDay.textContent = "";
+    return;
+  }
+
+  preferredCallDay.textContent = selectedDate.toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function validatePreferredSchedule() {
+  if (!preferredCallDateInput || !preferredCallTimeInput) return true;
+
+  preferredCallDateInput.setCustomValidity("");
+  preferredCallTimeInput.setCustomValidity("");
+
+  const minDateTime = getMinBookingDateTime();
+  const minDate = toLocalDateString(minDateTime);
+  preferredCallDateInput.min = minDate;
+
+  const selectedDate = preferredCallDateInput.value;
+  const selectedTime = preferredCallTimeInput.value;
+
+  updatePreferredDayLabel(selectedDate);
+
+  if (selectedDate && !selectedTime) {
+    preferredCallTimeInput.setCustomValidity("Choose a preferred call time or clear the date.");
+    return false;
+  }
+
+  if (selectedTime && !selectedDate) {
+    preferredCallDateInput.setCustomValidity("Choose a preferred call date or clear the time.");
+    return false;
+  }
+
+  if (!selectedDate || !selectedTime) {
+    return true;
+  }
+
+  const selectedDateTime = parseSelectedDateTime(selectedDate, selectedTime);
+  if (Number.isNaN(selectedDateTime.getTime())) {
+    preferredCallTimeInput.setCustomValidity("Enter a valid call date and time.");
+    return false;
+  }
+
+  const minTimeForSelectedDate =
+    selectedDate === minDate ? toLocalTimeString(minDateTime) : "00:00";
+  preferredCallTimeInput.min = minTimeForSelectedDate;
+
+  if (selectedDateTime < minDateTime) {
+    preferredCallTimeInput.setCustomValidity(
+      `Select a call slot at least ${MIN_BOOKING_LEAD_HOURS} hours from now.`
+    );
+    return false;
+  }
+
+  return true;
+}
+
+function openNativePicker(input) {
+  if (!input) return;
+
+  if (typeof input.showPicker === "function") {
+    try {
+      input.showPicker();
+      return;
+    } catch {
+      // Fallback for browsers that block programmatic picker opening.
+    }
+  }
+
+  input.focus();
+}
+
 function updateStepUI() {
   formSteps.forEach((step) => {
     const stepNumber = Number(step.dataset.step);
@@ -247,6 +375,20 @@ function validateCurrentStep() {
     }
   }
 
+  if (!validatePreferredSchedule()) {
+    if (!preferredCallDateInput.checkValidity()) {
+      preferredCallDateInput.reportValidity();
+      preferredCallDateInput.focus();
+      return false;
+    }
+
+    if (!preferredCallTimeInput.checkValidity()) {
+      preferredCallTimeInput.reportValidity();
+      preferredCallTimeInput.focus();
+      return false;
+    }
+  }
+
   return true;
 }
 
@@ -279,7 +421,7 @@ function renderPlans() {
         <div class="plan-category ${index === 0 ? "open" : ""}">
           <button class="category-head" type="button">
             <span>${escapeHtml(category.label)}</span>
-            <span>⌄</span>
+            <span>▼</span>
           </button>
           <div class="plan-list" ${index === 0 ? "" : "hidden"}>
             ${plansHtml}
@@ -333,12 +475,10 @@ function fillPreview() {
   const name = document.getElementById("name").value.trim() || "-";
   const email = document.getElementById("email").value.trim() || "-";
   const business = document.getElementById("business").value.trim() || "-";
-  const service = document.getElementById("service").value || "-";
 
   previewName.textContent = name;
   previewEmail.textContent = email;
   previewBusiness.textContent = business;
-  previewService.textContent = service;
 
   const checked = Array.from(document.querySelectorAll('input[name="planChoice"]:checked'));
   if (!checked.length) {
@@ -380,6 +520,7 @@ function showSubmitSuccess() {
 renderPlans();
 prefillFromQueryParams();
 updateSelections();
+validatePreferredSchedule();
 updateStepUI();
 resetModalState();
 
@@ -399,6 +540,28 @@ plansContainer.addEventListener("change", (event) => {
   if (!event.target.matches('input[name="planChoice"]')) return;
   updateSelections();
 });
+
+if (preferredCallDateInput && preferredCallTimeInput) {
+  preferredCallDateInput.addEventListener("change", () => {
+    validatePreferredSchedule();
+  });
+
+  preferredCallTimeInput.addEventListener("change", () => {
+    validatePreferredSchedule();
+  });
+}
+
+if (openDatePickerButton && preferredCallDateInput) {
+  openDatePickerButton.addEventListener("click", () => {
+    openNativePicker(preferredCallDateInput);
+  });
+}
+
+if (openTimePickerButton && preferredCallTimeInput) {
+  openTimePickerButton.addEventListener("click", () => {
+    openNativePicker(preferredCallTimeInput);
+  });
+}
 
 nextButtons.forEach((button) => {
   button.addEventListener("click", () => {
