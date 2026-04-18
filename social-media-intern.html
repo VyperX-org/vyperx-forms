@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>VyperX | Digital Content Creator and Social Media Strategist Intern</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link rel="icon" type="image/png" href="https://i.ibb.co/FqJ9mQ7H/Vyper-X.png" />
+		<style>
+			:root {
+				--bg: #060a11;
+				--bg-soft: #0e1522;
+				--card: rgba(14, 23, 37, 0.86);
+				--line: rgba(120, 151, 198, 0.26);
+				--text: #e9f1ff;
+				--muted: #9fb1d0;
+				--accent: #00d4ff;
+				--accent-2: #6bffcf;
+				--danger: #ff8ea3;
+			}
+
+			* {
+				box-sizing: border-box;
+			}
+
+			html,
+			body {
+				margin: 0;
+				min-height: 100%;
+				font-family: "Outfit", sans-serif;
+				color: var(--text);
+				background:
+					radial-gradient(circle at 15% 12%, rgba(0, 212, 255, 0.16), transparent 32%),
+					radial-gradient(circle at 85% 16%, rgba(107, 255, 207, 0.12), transparent 28%),
+					linear-gradient(145deg, #05080e 0%, #0a1120 45%, #0b1a30 100%);
+			}
+
+			body {
+				padding: 1.2rem;
+			}
+
+			.shell {
+				width: min(960px, 100%);
+				margin: 0 auto;
+				display: grid;
+				gap: 1rem;
+			}
+
+			.card {
+				border: 1px solid var(--line);
+				border-radius: 22px;
+				background: linear-gradient(160deg, rgba(18, 28, 44, 0.9), var(--card));
+				box-shadow: 0 24px 54px rgba(0, 0, 0, 0.4);
+			}
+
+			.hero {
+				padding: 1.5rem;
+			}
+
+			.brand {
+				display: flex;
+				gap: 0.9rem;
+				align-items: center;
+			}
+
+			.logo {
+				width: 58px;
+				height: 58px;
+				object-fit: contain;
+				filter: drop-shadow(0 8px 16px rgba(0, 212, 255, 0.24));
+			}
+
+			.eyebrow {
+				margin: 0;
+				text-transform: uppercase;
+				letter-spacing: 0.08em;
+				color: var(--accent);
+				font-size: 0.72rem;
+			}
+
+			h1 {
+				margin: 0.2rem 0 0;
+				font-family: "Space Grotesk", sans-serif;
+				font-size: clamp(1.35rem, 2.6vw, 2rem);
+			}
+
+			.lead {
+				margin: 0.95rem 0 0;
+				color: var(--muted);
+				line-height: 1.65;
+			}
+
+			.form-wrap {
+				padding: 1.2rem;
+			}
+
+			.section-title {
+				margin: 0 0 0.75rem;
+				font-family: "Space Grotesk", sans-serif;
+				font-size: 1rem;
+			}
+
+			.req-grid {
+				margin: 0 0 1.15rem;
+				padding: 0;
+				list-style: none;
+				display: grid;
+				gap: 0.55rem;
+			}
+
+			.req-grid li {
+				padding: 0.65rem 0.75rem;
+				border-radius: 12px;
+				border: 1px solid rgba(120, 151, 198, 0.22);
+				background: rgba(7, 14, 24, 0.78);
+				color: #d2def3;
+				font-size: 0.93rem;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+				gap: 0.8rem;
+			}
+
+			.field {
+				display: grid;
+				gap: 0.42rem;
+			}
+
+			.field.full {
+				grid-column: 1 / -1;
+			}
+
+			label {
+				color: #b9c9e3;
+				font-size: 0.86rem;
+			}
+
+			input,
+			textarea {
+				border: 1px solid rgba(120, 151, 198, 0.35);
+				border-radius: 12px;
+				background: rgba(7, 12, 21, 0.84);
+				color: var(--text);
+				padding: 0.78rem 0.82rem;
+				font: inherit;
+				transition: border-color 160ms ease, box-shadow 160ms ease;
+			}
+
+			textarea {
+				min-height: 110px;
+				resize: vertical;
+			}
+
+			input:focus,
+			textarea:focus {
+				outline: none;
+				border-color: var(--accent);
+				box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.16);
+			}
+
+			.checks {
+				margin: 0.25rem 0 1rem;
+				display: grid;
+				gap: 0.55rem;
+			}
+
+			.check-row {
+				display: flex;
+				align-items: flex-start;
+				gap: 0.52rem;
+				color: #d8e5fb;
+				font-size: 0.89rem;
+			}
+
+			.check-row input {
+				margin-top: 0.12rem;
+				accent-color: var(--accent-2);
+			}
+
+			.meta {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				gap: 0.7rem;
+				margin-top: 0.3rem;
+			}
+
+			.hint,
+			.counter {
+				margin: 0;
+				color: var(--muted);
+				font-size: 0.78rem;
+			}
+
+			.counter.limit {
+				color: var(--danger);
+			}
+
+			.btn {
+				width: 100%;
+				border: 0;
+				border-radius: 12px;
+				padding: 0.88rem 1rem;
+				font: inherit;
+				font-weight: 700;
+				color: #031224;
+				cursor: pointer;
+				background: linear-gradient(110deg, #00d1ff 0%, #6bffcf 100%);
+				box-shadow: 0 12px 30px rgba(0, 184, 255, 0.26);
+			}
+
+			.btn:hover {
+				filter: brightness(1.03);
+			}
+
+			.note {
+				margin: 0.8rem 0 0;
+				color: var(--muted);
+				font-size: 0.78rem;
+				line-height: 1.45;
+			}
+
+			.bot-field {
+				position: absolute;
+				left: -5000px;
+			}
+
+			@media (max-width: 700px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<main class="shell">
+			<section class="card hero">
+				<div class="brand">
+					<img
+						src="https://i.ibb.co/h1f0hSy6/Transparent-Vyper-X.png"
+						alt="VyperX"
+						class="logo"
+					/>
+					<div>
+						<p class="eyebrow">VyperX Talent Form</p>
+						<h1>Digital Content Creator and Social Media Strategist Intern</h1>
+					</div>
+				</div>
+				<p class="lead">
+					Apply for the on-site Digital Content Creator and Social Media Strategist Intern role at VyperX. Please ensure you match
+					all eligibility requirements before submitting your details.
+				</p>
+			</section>
+
+			<section class="card form-wrap">
+				<h2 class="section-title">Role Requirements</h2>
+				<ul class="req-grid" aria-label="Eligibility requirements">
+					<li>Female</li>
+					<li>Not camera shy</li>
+					<li>Content creator</li>
+					<li>Can fulfil client requirements</li>
+					<li>On-site role (Rajarhat)</li>
+				</ul>
+
+				<form
+					name="VyperX Digital Content Creator and Social Media Strategist Intern"
+					method="POST"
+					action="/"
+					data-netlify="true"
+					netlify-honeypot="bot-field"
+				>
+					<input
+						type="hidden"
+						name="form-name"
+						value="VyperX Digital Content Creator and Social Media Strategist Intern"
+					/>
+					<p class="bot-field">
+						<label>
+							Do not fill this field if you are human:
+							<input name="bot-field" />
+						</label>
+					</p>
+
+					<div class="checks">
+						<label class="check-row">
+							<input type="checkbox" name="eligible_female" required />
+							I confirm I match the requirement: Female
+						</label>
+						<label class="check-row">
+							<input type="checkbox" name="eligible_not_camera_shy" required />
+							I am comfortable on camera (not camera shy)
+						</label>
+						<label class="check-row">
+							<input type="checkbox" name="eligible_content_creator" required />
+							I have content creation skills
+						</label>
+						<label class="check-row">
+							<input type="checkbox" name="eligible_client_requirements" required />
+							I can fulfil client requirements
+						</label>
+						<label class="check-row">
+							<input type="checkbox" name="eligible_on_site_rajarhat" required />
+							I can work on-site in Rajarhat
+						</label>
+					</div>
+
+					<div class="grid">
+						<div class="field">
+							<label for="name">Name</label>
+							<input id="name" name="name" type="text" placeholder="Your full name" required />
+						</div>
+
+						<div class="field">
+							<label for="email">Email</label>
+							<input id="email" name="email" type="email" placeholder="you@email.com" required />
+						</div>
+
+						<div class="field full">
+							<label for="phone">Phone</label>
+							<input id="phone" name="phone" type="tel" placeholder="+91 XXXXX XXXXX" required />
+						</div>
+
+						<div class="field full">
+							<label for="strength">What's your strength (in 150 characters)</label>
+							<textarea
+								id="strength"
+								name="strength"
+								maxlength="150"
+								placeholder="Tell us your strongest skill in up to 150 characters"
+								required
+							></textarea>
+							<div class="meta">
+								<p class="hint">Keep it short, specific, and role-relevant.</p>
+								<p class="counter" id="strengthCounter">0 / 150</p>
+							</div>
+                            <br/>
+						</div>
+					</div>
+
+					<button type="submit" class="btn">Submit Application</button>
+
+				</form>
+			</section>
+		</main>
+
+		<script>
+			const strengthInput = document.getElementById("strength");
+			const counter = document.getElementById("strengthCounter");
+
+			function updateCounter() {
+				const count = strengthInput.value.length;
+				counter.textContent = `${count} / 150`;
+				counter.classList.toggle("limit", count >= 150);
+			}
+
+			strengthInput.addEventListener("input", updateCounter);
+			updateCounter();
+		</script>
+	</body>
+</html>
