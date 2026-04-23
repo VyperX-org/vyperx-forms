@@ -263,6 +263,23 @@
 				line-height: 1.45;
 			}
 
+			.submit-status {
+				margin: 0.85rem 0 0;
+				padding: 0.85rem 0.95rem;
+				border-radius: 12px;
+				border: 1px solid rgba(33, 211, 138, 0.35);
+				background: rgba(33, 211, 138, 0.12);
+				color: #bff9df;
+				font-size: 0.92rem;
+				line-height: 1.45;
+			}
+
+			.submit-status.error {
+				border-color: rgba(255, 142, 163, 0.35);
+				background: rgba(255, 142, 163, 0.12);
+				color: #ffd1da;
+			}
+
 			.bot-field {
 				position: absolute;
 				left: -5000px;
@@ -397,19 +414,22 @@
 								<p class="hint">Keep it short, specific, and role-relevant.</p>
 								<p class="counter" id="strengthCounter">0 / 150</p>
 							</div>
-                            <br/>
 						</div>
 					</div>
 
-					<button type="submit" class="btn">Submit Application</button>
+					<button type="submit" class="btn" id="submitBtn">Submit Application</button>
+					<p class="submit-status" id="submitStatus" hidden></p>
 
 				</form>
 			</section>
 		</main>
 
 		<script>
+			const form = document.querySelector('form[name="VyperX Internship Jobs Application"]');
 			const strengthInput = document.getElementById("strength");
 			const counter = document.getElementById("strengthCounter");
+			const submitBtn = document.getElementById("submitBtn");
+			const submitStatus = document.getElementById("submitStatus");
 
 			function updateCounter() {
 				const count = strengthInput.value.length;
@@ -419,6 +439,44 @@
 
 			strengthInput.addEventListener("input", updateCounter);
 			updateCounter();
+
+			form.addEventListener("submit", async (event) => {
+				event.preventDefault();
+
+				if (!form.reportValidity()) {
+					return;
+				}
+
+				submitBtn.disabled = true;
+				submitBtn.textContent = "Submitting...";
+				submitStatus.hidden = true;
+				submitStatus.classList.remove("error");
+
+				try {
+					const body = new URLSearchParams(new FormData(form)).toString();
+					const response = await fetch("/", {
+						method: "POST",
+						headers: { "Content-Type": "application/x-www-form-urlencoded" },
+						body,
+					});
+
+					if (!response.ok) {
+						throw new Error("Submission failed");
+					}
+
+					form.reset();
+					updateCounter();
+					submitStatus.textContent = "Submitted successfully. We have received your application.";
+					submitStatus.hidden = false;
+				} catch (error) {
+					submitStatus.textContent = "Submission failed. Please try again.";
+					submitStatus.hidden = false;
+					submitStatus.classList.add("error");
+				} finally {
+					submitBtn.disabled = false;
+					submitBtn.textContent = "Submit Application";
+				}
+			});
 		</script>
 	</body>
 </html>
